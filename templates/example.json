@@ -1,0 +1,200 @@
+{
+  "pageinfo" : {
+     "title" : "Example report"
+  },
+  "datasources": {
+    "url": [
+      {
+        "id": 1,
+        "type": "jsonstat",
+        "url": "https://www.nomisweb.co.uk/api/v01/dataset/NM_144_1.jsonstat.json?geography=$geography&rural_urban=0&measures=20100,20301"
+      },
+      {
+        "id": 2,
+        "type": "jsonstat",
+        "url": "https://www.nomisweb.co.uk/api/v01/dataset/NM_145_1.jsonstat.json?geography=$geography&rural_urban=0&measures=20100,20301"
+      },
+      {
+        "id": 3,
+        "type": "jsonstat",
+        "url": "https://www.nomisweb.co.uk/api/v01/dataset/NM_603_1.jsonstat.json?geography=$geography&rural_urban=0&measures=20100,20301"
+      },
+      {
+        "id": 4,
+        "type": "jsonstat",
+        "url": "https://www.nomisweb.co.uk/api/v01/dataset/NM_604_1.jsonstat.json?geography=$geography&rural_urban=0&measures=20100,20301",
+        "substitute": {
+           "cell": [ { "value": "0", "label": "$subdescription" } ]
+        }
+      },
+      {
+        "id": 5,
+        "type": "jsonstat",
+        "url": "https://www.cso.ie/StatbankServices/StatbankServices.svc/jsonservice/responseinstance/EP001?"
+      },
+      {
+        "id": 6,
+        "type": "jsonstat",
+        "url": "http://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/nama_10_gdp?precision=1&na_item=B1GQ&unit=CLV05_MNAC&unit=CP_MEUR&unit=CP_MNAC&time=2016&filterNonGeo=1"
+      }
+    ]
+  },
+  "variables": {
+    "usualresidents" : {
+      "name" : "usual residents",
+      "datasource": 1,
+      "select" : { "cell": "0", "measures" : "20100" }
+    }
+  },
+  "sections": [
+    {
+      "title": "$geognames",
+      "subtitle": "Local Area Report"
+    },
+    {
+      "type": "paragraph",
+      "options": {
+        "text": "This is an example report to demonstrate the functionality of the <a href=\"https://www.github.com/nomisweb/fe-web-templated-reports\">templated reports project</a>. Figures are sourced from the Nomis API (for $geognamelist[0]), Ireland Central Statistics Office and Eurostat."
+      }
+    },
+    {
+      "type": "paragraph",
+      "options": {
+        "text": "There were $usualresidents usual residents as at Census day 2011."
+      }
+    },
+    {
+      "type": "contents",
+      "options": {
+        "title": "Contents",
+        "depth": 2
+      }
+    },
+    {
+      "title" : "Data from Central Statistics Office, Ireland",
+      "sections" : [
+        {
+          "type": "table",
+          "options": {
+            "caption": "$source",
+            "includeDatasetMetadata" : false,
+            "datasource": { "id": 5, "bundleDatasetIndex": 0 },
+            "source": "Central Statistics Office, Ireland (EP001)",
+            "rows": [ { "id": "Province County or City", "select": [ "02", "14", "023" ] } ],
+            "columns": [
+              { "id": "Sex", "select": [ "-" ] },
+              { "id": "Census Year" },
+              { "id": "Statistic" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title" : "Data from Eurostat",
+      "sections" : [
+        {
+          "type": "table",
+          "options": {
+            "caption": "$source",
+            "includeDatasetMetadata" : false,
+            "datasource": { "id": 6 },
+            "source": "Eurostat",
+            "rows": [ { "id": "geo", "select": [ "UK", "FR", "IT", "HU", "EL" ] } ],
+            "columns": [
+              { "id": "time" },
+              { "id": "na_item" },
+              { "id": "unit" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Who we are",
+      "options": { "contentsText": "Information about the personal characterists of people who usually live in an area including: #0, #1, #2, and #3" },
+      "sections": [
+        {
+          "type": "table",
+          "options": {
+            "caption": "Usual resident population",
+	    	"includeDatasetMetadata" : false,
+	    	"shortName" : "Resident population",
+            "datasource": { "id": 1 },
+            "source": "ONS - $date Census (KS101EW)",
+            "rows": [ { "id": "cell" } ],
+            "columns": [
+              { "id": "geography" },
+              {
+                "id": "measures",
+                "select": [ "20100", "20301" ],
+                "labels": [ "count", "%" ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "table",
+          "options": {
+            "caption": "Age structure",
+	    	"includeDatasetMetadata" : false,
+	    	"shortName" : "Age",
+            "datasource": { "id": 2 },
+            "source": "ONS - $date Census (KS102EW)",
+            "rows": [ { "id": "cell" } ],
+            "columns": [
+              { "id": "geography" },
+              {
+                "id": "measures",
+                "select": [ "20100", "20301" ],
+                "labels": [ "count", "%" ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "table",
+          "options": {
+            "caption": "Marital and civil partnership status",
+	    	"includeDatasetMetadata" : false,
+	    	"shortName" : "Marital status",
+            "datasource": { "id": 3 },
+            "source": "ONS - $date Census (KS103EW)",
+            "rows": [ { "id": "cell" } ],
+            "columns": [
+              { "id": "geography" },
+              {
+                "id": "measures",
+                "select": [ "20100", "20301" ],
+                "labels": [ "count", "%" ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "table",
+          "options": {
+            "caption": "Living arrangements",
+	    	    "includeDatasetMetadata" : false,
+            "datasource": { "id": 4 },
+            "source": "ONS - $date Census (KS104EW)",
+            "rows": [ { "id": "cell" } ],
+            "columns": [
+              { "id": "geography" },
+              {
+                "id": "measures",
+                "select": [ "20100", "20301" ],
+                "labels": [ "count", "%" ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+       "title": "Definitions",
+       "type": "definitions"
+    }
+  ]
+}
+  

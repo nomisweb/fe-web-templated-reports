@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<head>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/jquery/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/badosa/JSON-stat/json-stat.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/spencerhedger/function-queue/function-queue.js"></script>
+
+    <link rel="Stylesheet" href="https://cdn.jsdelivr.net/gh/nomisweb/fe-web-light-ui/css/ui.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/nomisweb/fe-web-light-ui/js/ui.js"></script>        
+
+    <link rel="Stylesheet" href="css/profile.css" />
+    <script type="text/javascript" src="js/profile.js"></script>
+</head>
+<body>
+<main role="main">
+<h1 id="title"></h1>
+<div id="report"></div>
+
+<script>
+    $.getJSON('templates/example.json', function(template) {
+        params = {
+            config: {
+                geography: [ '1941962754' ],
+                geognames: 'Durham',
+                geognamelist: [ 'Durham']
+            },
+            profile: template,
+            target: report,
+            lazyload: false,
+            hooks: {
+                table: {
+                    columnHeading: {
+                        onclick: function(colid, id, label) {
+                            var _colid = colid;
+                            var _id = id;
+                            var _label = label;
+
+                            // Must return a function that is called when user clicks on column heading.
+                            return function () {
+                                console.log('Clicked on ' + _colid + ' column heading with value ID ' + _id + ' and label ' + _label);
+                            };  
+                        } 
+                    }
+                }
+            },
+            onRenderComplete: function () { }
+        };
+
+        if(template.pageinfo && template.pageinfo.title) document.getElementById('title').innerHTML = template.pageinfo.title;
+
+        var p = NomisProfile.create(params)
+    });
+</script>
+</main>
+</body>
