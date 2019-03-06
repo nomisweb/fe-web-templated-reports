@@ -12,7 +12,11 @@
          Dataset(index): return a dataset object
             index: the index in the bundle (optional, default 0)
       
-      A "dataset object" provides access to the data through "Data" and "Dimension" functions.
+      A "dataset object" provides access to the data through:
+         `Data` function: access to values
+         `Dimension` function: access to dimensions
+         `label` property: dataset name
+         `extension` property: arbitrary properties and object values with additional information
 */
 function jsonstatDAO(uri, callback, options) {
    JSONstat(uri, function() {
@@ -103,6 +107,7 @@ function jsonstatDAO(uri, callback, options) {
                   hierarchy: flag to indicate if this dimension is a hierarchy (boolean)
                   id: array of identifiers for the categories in this dimension
                   length: number of identifiers for the categories in this dimension
+                  extension: arbitrary properties and object values with additional information
                   Category: has two different types of return value:
                      If specifying no arguments:
                         returns an array of objects with properties of:
@@ -123,6 +128,7 @@ function jsonstatDAO(uri, callback, options) {
                hierarchy: dim.hierarchy,
                id: dim.id,
                length: dim.length,
+               extension: dim.extension,
                Category: function(cid) {
                   // All categories as a list
                   if(cid == undefined || cid == null) {
