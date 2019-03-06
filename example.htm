@@ -9,6 +9,7 @@
 
     <link rel="Stylesheet" href="css/profile.css" />
     <script type="text/javascript" src="js/profile.js"></script>
+    <script type="text/javascript" src="js/dao-jsonstat.js"></script>
 </head>
 <body>
 <main role="main">
@@ -17,7 +18,7 @@
 
 <script>
     $.getJSON('templates/example.json', function(template) {
-        params = {
+        nomisProfile.create({
             config: {
                 geography: [ '1941962754' ],
                 geognames: 'Durham',
@@ -25,6 +26,7 @@
             },
             profile: template,
             target: report,
+            titleElement: 'title',
             lazyload: false,
             hooks: {
                 table: {
@@ -42,12 +44,12 @@
                     }
                 }
             },
-            onRenderComplete: function () { }
-        };
-
-        if(template.pageinfo && template.pageinfo.title) document.getElementById('title').innerHTML = template.pageinfo.title;
-
-        var p = NomisProfile.create(params)
+            popupMessage: function(title, message) { window.alert('Message about ' + title); },
+            onRenderComplete: function () { },
+            dao: {
+                jsonstat: jsonstatDAO
+            }
+        });
     });
 </script>
 </main>
