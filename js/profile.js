@@ -5,59 +5,17 @@
 * Author: Spencer Hedger
 *
 */
-var NomisProfile = function () {
-    // https://tc39.github.io/ecma262/#sec-array.prototype.includes
-    if (!Array.prototype.includes) {
-        Object.defineProperty(Array.prototype, 'includes', {
-            value: function (searchElement, fromIndex) {
 
-                // 1. Let O be ? ToObject(this value).
-                if (this == null) {
-                    throw new TypeError('"this" is null or not defined');
-                }
+/*
+    Usage: call "NomisProfile.create(params)" with configuration.
 
-                var o = Object(this);
-
-                // 2. Let len be ? ToLength(? Get(O, "length")).
-                var len = o.length >>> 0;
-
-                // 3. If len is 0, return false.
-                if (len === 0) {
-                    return false;
-                }
-
-                // 4. Let n be ? ToInteger(fromIndex).
-                //    (If fromIndex is undefined, this step produces the value 0.)
-                var n = fromIndex | 0;
-
-                // 5. If n >= 0, then
-                //  a. Let k be n.
-                // 6. Else n < 0,
-                //  a. Let k be len + n.
-                //  b. If k < 0, let k be 0.
-                var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-
-                function sameValueZero(x, y) {
-                    return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
-                }
-
-                // 7. Repeat, while k < len
-                while (k < len) {
-                    // a. Let elementK be the result of ? Get(O, ! ToString(k)).
-                    // b. If SameValueZero(searchElement, elementK) is true, return true.
-                    // c. Increase k by 1. 
-                    if (sameValueZero(o[k], searchElement)) {
-                        return true;
-                    }
-                    k++;
-                }
-
-                // 8. Return false
-                return false;
-            }
-        });
-    }
-
+    This will create the profile in the browser and return an object with the following functions:
+        remove: remove the profile from the target DOM element
+        refresh: refresh the profile by requerying data
+        redraw: redraw the profile
+        params: get the params object that was passed in to the create function
+*/
+var nomisProfile = function () {
     function createProfile(params) {
         var _params = params;
         var data = null;
@@ -590,7 +548,7 @@ var NomisProfile = function () {
             var _section = section;
             var dsrc = section.options.datasource;
             var currData = data[dsrc.id];
-            var d = currData.jsonstat;
+            var d = currData.dao;
             var pivot = dsrc.pivot;
             var baseFilter = getFilter(d, dsrc.filter);
             var needsRequery = { status: false };
@@ -716,8 +674,7 @@ var NomisProfile = function () {
 
         function createTable(p, section, sectionlist, index, depth, placeholder, filter, refresh) {
             var dsrc = section.options.datasource;
-            var d = data[dsrc.id].jsonstat;
-            if(d.class === "bundle") d = d.Dataset((dsrc.bundleDatasetIndex != undefined)? dsrc.bundleDatasetIndex : 0); // If response is a bundle, assume first dataset in bundle
+            var d = data[dsrc.id].dao.Dataset((dsrc.bundleDatasetIndex != undefined)? dsrc.bundleDatasetIndex : 0);
 
             var rows = section.options.rows;
             var cols = section.options.columns;
@@ -1016,8 +973,12 @@ var NomisProfile = function () {
                     section._def.notes.map(function (note) {
                         m += '<div style="margin-bottom: 1em;">' + nomisUI.util.textism(note) + '</div>';
                     });
-                    modalPopup(section.options.caption + ' ' + defname.toLowerCase(), m);
-                    return false;
+
+                    if(_params.popupMessage) {
+                        _params.popupMessage(section.options.caption + ' ' + defname.toLowerCase(), m);
+                        return false;
+                    }
+                    else return true;
                 }
                 li.appendChild(a);
                 ul.appendChild(li);
@@ -1194,7 +1155,7 @@ var NomisProfile = function () {
                 if (target != null) target.appendChild(placeholder);
             }
 
-            var d = data[dsrc.id].jsonstat;
+            var d = data[dsrc.id].dao;
 
             var filter = getFilter(d, dsrc.filter);
             var val = '';
@@ -1365,7 +1326,7 @@ var NomisProfile = function () {
 
             return function () {
                 v.getValue = function (index) {
-                    var cell = data[v.datasource].jsonstat.Data(v.select);
+                    var cell = data[v.datasource].dao.Dataset(0).Data(v.select);
 
                     if (index) {
                         if (cell.length > index) return cell[index].value;
@@ -1701,13 +1662,7 @@ var NomisProfile = function () {
             return div;
         };
 
-        // Make $ substitutions from data
-        function dynDLabel(label, dimension, data) {
-            if (data.extension.subdescription && label.indexOf('$subdescription') != -1) label = label.replace('$subdescription', data.extension.subdescription);
-            return label;
-        }
-
-        function call_jsonstat(req, callback) {
+        function call_data(req, callback) {
             if (req.running == true || req.ready == true) return;
 
             var u = req;
@@ -1726,39 +1681,24 @@ var NomisProfile = function () {
 
             u.running = true;
 
-            JSONstat(uri, function () {
-                if (data == null) data = new Array();
+            var daocreator = _params.dao[u.type];
+            
+            if(daocreator) {
+                daocreator(uri, function(dao) {
+                    if (data == null) data = new Array();
 
-                data[u.id] = data[u.id] || {};
-                data[u.id].jsonstat = this;
-                data[u.id].table = this.toTable({ type: "array", field: "id", content: "id" });
-                data[u.id].apiUrl = uri;
+                    data[u.id] = data[u.id] || {};
+                    data[u.id].dao = dao;
+                    data[u.id].apiUrl = uri;
 
-                // This allows substitution of labels in data with customised labels
-                if (u.substitute) {
-                    var s = u.substitute;
-                    var jstatdata = this;
-
-                    for (var property in s) {
-                        if (s.hasOwnProperty(property)) {
-                            var d = jstatdata.Dimension(property);
-                            if (d) {
-                                s[property].map(function (p) {
-                                    if (d.__tree__.category.label.hasOwnProperty(p.value)) {
-                                        d.__tree__.category.label[p.value] = dynDLabel(p.label, d.__tree__, jstatdata);
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-
-                // Notify that data is ready
-                u.running = false;
-                u.ready = true;
-                if (u.listeners != undefined) for (var i = 0; i < u.listeners.length; i++) u.listeners[i](data[u.id]);
-                if (callback != undefined) callback();
-            });
+                    // Notify that data is ready
+                    u.running = false;
+                    u.ready = true;
+                    if (u.listeners != undefined) for (var i = 0; i < u.listeners.length; i++) u.listeners[i](data[u.id]);
+                    if (callback != undefined) callback();
+                }, { labelSubstitutions: u.substitute, onError: function(msg) {} });
+            }
+            else console.log('Error: no DAO support for ' + u.type);
         }
 
         function call_html(req, callback) {
@@ -1822,8 +1762,8 @@ var NomisProfile = function () {
         }
 
         function getDataForSource(u, callback) {
-            if (u.type === 'jsonstat') call_jsonstat(u, callback);
-            else if (u.type === 'html') call_html(u, callback);
+            if (u.type === 'html') call_html(u, callback); // Special case for HTML as type isn't really "data" in the DAO sense
+            else call_data(u, callback); // All other types of data should use a DAO
         }
 
         function getdata(datasources, callback) {
@@ -1908,6 +1848,9 @@ var NomisProfile = function () {
             mapnum = 0;
 
             initCustomVariables();
+
+            // Set title
+            if(profile.pageinfo && profile.pageinfo.title && _params.titleElement) document.getElementById(_params.titleElement).innerHTML = profile.pageinfo.title;
 
             // Get started
             if (_params.lazyload == true) {
