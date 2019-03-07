@@ -35,6 +35,7 @@
 .profile_contents li { padding-bottom: 0.5em; }
 .dataset-metadata div { padding-left: 1em; }
 .dataset-metadata h2 { padding-left: 0; }
+.table-footnote h3 { padding-left: 0; }
 
 @media screen and (max-width: 1199px) {
     table { min-width: auto; }
@@ -208,6 +209,7 @@ span.infoicon
 {
     display: inline-block;
     width: 10em;
+    padding-right: 1em;
 }
 
 .table-footnote th 
