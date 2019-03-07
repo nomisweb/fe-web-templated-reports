@@ -7,7 +7,7 @@
 */
 
 /*
-    Usage: call "NomisProfile.create(params)" with configuration.
+    Usage: call "nomisReport.create(params)" with configuration.
 
     This will create the profile in the browser and return an object with the following functions:
         remove: remove the profile from the target DOM element
@@ -15,7 +15,7 @@
         redraw: redraw the profile
         params: get the params object that was passed in to the create function
 */
-var nomisProfile = function () {
+var nomisReport = function () {
     function createProfile(params) {
         var _params = params;
         var data = null;
@@ -130,7 +130,7 @@ var nomisProfile = function () {
 
         function doneSecRender() {
             renderedsecscomplete++;
-            if (renderedsecs == renderedsecscomplete && _params.onRenderComplete != undefined) _params.onRenderComplete();
+            if (renderedsecs == renderedsecscomplete && _params.hooks != undefined && _params.hooks.onRenderComplete != undefined) _params.hooks.onRenderComplete();
         }
 
         function sec_definitions(section) {
@@ -242,8 +242,8 @@ var nomisProfile = function () {
         }
 
         function findDatasource(p, id) {
-            for (var i = 0; i < p.datasources.url.length; i++) {
-                var u = p.datasources.url[i];
+            for (var i = 0; i < p.datasources.length; i++) {
+                var u = p.datasources[i];
                 if (u.id == id) return u;
             }
 
@@ -892,7 +892,7 @@ var nomisProfile = function () {
                 else return null;
             }
 
-            // Assume Nomis API and make substitutions to create a dynamic XLSX url
+            // If Nomis API make substitutions to create a dynamic XLSX url
             var url = d.apiUrl;
             if (!url) url = d.url;
             
@@ -974,8 +974,8 @@ var nomisProfile = function () {
                         m += '<div style="margin-bottom: 1em;">' + nomisUI.util.textism(note) + '</div>';
                     });
 
-                    if(_params.popupMessage) {
-                        _params.popupMessage(section.options.caption + ' ' + defname.toLowerCase(), m);
+                    if(_params.hooks && _params.hooks.popupMessage) {
+                        _params.hooks.popupMessage(section.options.caption + ' ' + defname.toLowerCase(), m);
                         return false;
                     }
                     else return true;
@@ -1325,8 +1325,10 @@ var nomisProfile = function () {
             var d = src;
 
             return function () {
+                var ds = data[v.datasource].dao.Dataset(0);
+
                 v.getValue = function (index) {
-                    var cell = data[v.datasource].dao.Dataset(0).Data(v.select);
+                    var cell = ds.Data(v.select);
 
                     if (index) {
                         if (cell.length > index) return cell[index].value;
@@ -1343,6 +1345,17 @@ var nomisProfile = function () {
                         return cell.value;
                     }
                 };
+
+                // Set some information in the variable object with names of things selected.
+                v.names = [];
+                nomisUI.util.forEachProperty(v.select, function(k) {
+                    var dim = ds.Dimension(k);
+                    
+                    if(dim) {
+                        var cat = dim.Category(v.select[k]);
+                        v.names.push({ id: k, label: (cat)? cat.label : v.select[k] });
+                    }
+                });
 
                 notifyVarsReady();
             }
@@ -1390,11 +1403,7 @@ var nomisProfile = function () {
         }
 
         function substituteVars(text) {
-            // Geography names
-            if (_params.config.geognamelist) _params.config.geognamelist.map(function (name, index) {
-                text = text.replace('$geognamelist[' + index + ']', name);
-            });
-
+            // Nothing to substitute
             if (profile.variables == false || text.indexOf('$') == -1) return text;
 
             var list = profile.variables;
@@ -1405,8 +1414,15 @@ var nomisProfile = function () {
                     var val = v.getValue();
                     if (val == null) val = '-';
 
-                    text = text.replace('$' + property, numberWithCommas(val));
                     text = text.replace('$' + property + '.name', v.name);
+
+                    // Substitute labels from selected properties.
+                    for(var i = 0; i < v.names.length; i++) {
+                        text = text.replace('$' + property + '.' + v.names[i].id, v.names[i].label);
+                    }
+
+                    // Do this substitution last so other longer strings before it can work.
+                    text = text.replace('$' + property, numberWithCommas(val));
                 }
             }
 
@@ -1769,7 +1785,7 @@ var nomisProfile = function () {
         function getdata(datasources, callback) {
             data = [];
 
-            var urls = datasources.url;
+            var urls = datasources;
 
             for (var i = 0; i < urls.length; i++) {
                 getDataForSource(urls[i], callback);
@@ -1783,7 +1799,7 @@ var nomisProfile = function () {
         function checkWinFold() {
             var h = win.scrollTop() + win.height();
 
-            var url = profile.datasources.url;
+            var url = profile.datasources;
 
             for (var i = 0; i < url.length; i++) {
                 var pos = url[i].pos;
@@ -1794,7 +1810,7 @@ var nomisProfile = function () {
         }
 
         function getAllData() {
-            var url = profile.datasources.url;
+            var url = profile.datasources;
 
             for (var i = 0; i < url.length; i++) {
                 var pos = url[i].pos;
@@ -1822,8 +1838,8 @@ var nomisProfile = function () {
 
             // Place the substituition block into each data source
             if (_params.config.substitute) {
-                if (profile.datasources && profile.datasources.url) {
-                    profile.datasources.url.map(function (d) {
+                if (profile.datasources && profile.datasources) {
+                    profile.datasources.map(function (d) {
                         // Need to merge
                         if (d.substitute) {
                             for (var property in _params.config.substitute) {
@@ -1848,9 +1864,6 @@ var nomisProfile = function () {
             mapnum = 0;
 
             initCustomVariables();
-
-            // Set title
-            if(profile.pageinfo && profile.pageinfo.title && _params.titleElement) document.getElementById(_params.titleElement).innerHTML = profile.pageinfo.title;
 
             // Get started
             if (_params.lazyload == true) {
