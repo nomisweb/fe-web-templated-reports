@@ -1,22 +1,7 @@
 /*
    Abstracted access layer to the json-stat API (https://github.com/badosa/JSON-stat).
-
-   jsonstatDAO(uri, callback, labelSubstitutions)
-      uri:  location of the data
-      callback: function to return DAO object on when ready
-      options: optional argunment object with optional properties:
-         labelSubstitutions:  array of dimension label substitutions to make
-         onError:  function to call if an error occurs (accepts string containing reason)
-      
-      Returns an object to access a collection of data with the following functions:
-         Dataset(index): return a dataset object
-            index: the index in the bundle (optional, default 0)
-      
-      A "dataset object" provides access to the data through:
-         `Data` function: access to values
-         `Dimension` function: access to dimensions
-         `label` property: dataset name
-         `extension` property: arbitrary properties and object values with additional information
+   
+   Following implementation guide at https://github.com/nomisweb/fe-web-templated-reports/docs/dao.md
 */
 function jsonstatDAO(uri, callback, options) {
    JSONstat(uri, function() {
@@ -61,16 +46,6 @@ function jsonstatDAO(uri, callback, options) {
             }
          }
 
-         /*
-            Data(select)
-               select:  object with properties of dimensions and categories to
-                        filter result
-
-            Returns null if not found, or an object with properties of:
-               value: value of the observation
-               status: status of the value
-               flag: any flag associated with the value
-         */
          function Data(select) {
             var v = _data.Data(select);
 
@@ -98,28 +73,6 @@ function jsonstatDAO(uri, callback, options) {
             else return null;
          }
 
-         /*
-            Dimension(id)
-               id:   id of dimension to retreive
-            
-               Returns null if not found, or an object with properties of:
-                  label: name of the dimension
-                  hierarchy: flag to indicate if this dimension is a hierarchy (boolean)
-                  id: array of identifiers for the categories in this dimension
-                  length: number of identifiers for the categories in this dimension
-                  extension: arbitrary properties and object values with additional information
-                  Category: has two different types of return value:
-                     If specifying no arguments:
-                        returns an array of objects with properties of:
-                           length: number of categories
-                           id: array of category IDs
-                     If specifying category ID:
-                        returns null if not found, or an object with properties of:
-                           index: index of the category in the list
-                           label: label of the category
-                           unit: null or an object with properties of:
-                              decimals: number of decimal places to display precision
-         */
          function Dimension(id) {
             var dim = _data.Dimension(id);
 
