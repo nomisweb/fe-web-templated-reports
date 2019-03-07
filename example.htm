@@ -7,45 +7,23 @@
     <link rel="Stylesheet" href="https://cdn.jsdelivr.net/gh/nomisweb/fe-web-light-ui/css/ui.css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/nomisweb/fe-web-light-ui/js/ui.js"></script>        
 
-    <link rel="Stylesheet" href="css/profile.css" />
-    <script type="text/javascript" src="js/profile.js"></script>
+    <link rel="Stylesheet" href="css/report.css" />
+    <script type="text/javascript" src="js/report.js"></script>
     <script type="text/javascript" src="js/dao-jsonstat.js"></script>
 </head>
 <body>
 <main role="main">
-<h1 id="title"></h1>
 <div id="report"></div>
 
 <script>
     $.getJSON('templates/example.json', function(template) {
-        nomisProfile.create({
+        nomisReport.create({
             config: {
-                geography: [ '1941962754' ],
-                geognames: 'Durham',
-                geognamelist: [ 'Durham']
+                geography: [ '1941962754' ]
             },
             profile: template,
-            target: report,
-            titleElement: 'title',
+            target: document.getElementById('report'),
             lazyload: false,
-            hooks: {
-                table: {
-                    columnHeading: {
-                        onclick: function(colid, id, label) {
-                            var _colid = colid;
-                            var _id = id;
-                            var _label = label;
-
-                            // Must return a function that is called when user clicks on column heading.
-                            return function () {
-                                console.log('Clicked on ' + _colid + ' column heading with value ID ' + _id + ' and label ' + _label);
-                            };  
-                        } 
-                    }
-                }
-            },
-            popupMessage: function(title, message) { window.alert('Message about ' + title); },
-            onRenderComplete: function () { },
             dao: {
                 jsonstat: jsonstatDAO
             }
