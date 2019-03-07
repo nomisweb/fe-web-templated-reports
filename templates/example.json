@@ -2,8 +2,7 @@
   "pageinfo" : {
      "title" : "Example report"
   },
-  "datasources": {
-    "url": [
+  "datasources": [
       {
         "id": 1,
         "type": "jsonstat",
@@ -37,8 +36,7 @@
         "type": "jsonstat",
         "url": "http://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/nama_10_gdp?precision=1&na_item=B1GQ&unit=CLV05_MNAC&unit=CP_MEUR&unit=CP_MNAC&time=2016&filterNonGeo=1"
       }
-    ]
-  },
+  ],
   "variables": {
     "usualresidents" : {
       "name" : "usual residents",
@@ -48,19 +46,19 @@
   },
   "sections": [
     {
-      "title": "$geognames",
-      "subtitle": "Local Area Report"
+      "title": "Example report",
+      "subtitle": "Sub-title for example report"
     },
     {
       "type": "paragraph",
       "options": {
-        "text": "This is an example report to demonstrate the functionality of the <a href=\"https://www.github.com/nomisweb/fe-web-templated-reports\">templated reports project</a>. Figures are sourced from the Nomis API (for $geognamelist[0]), Ireland Central Statistics Office and Eurostat."
+        "text": "This is an example report to demonstrate the functionality of the <a href=\"https://www.github.com/nomisweb/fe-web-templated-reports\">templated reports project</a>. Figures are sourced from the Nomis API, Ireland Central Statistics Office and Eurostat."
       }
     },
     {
       "type": "paragraph",
       "options": {
-        "text": "There were $usualresidents usual residents as at Census day 2011."
+        "text": "In $usualresidents.geography there were $usualresidents $usualresidents.name as at Census day 2011."
       }
     },
     {
