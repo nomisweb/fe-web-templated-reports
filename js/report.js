@@ -1,6 +1,6 @@
 /*
 *
-* Nomis Profile creator
+* Nomis Report creator
 *
 * Author: Spencer Hedger
 *
@@ -9,10 +9,10 @@
 /*
     Usage: call "nomisReport.create(params)" with configuration.
 
-    This will create the profile in the browser and return an object with the following functions:
-        remove: remove the profile from the target DOM element
-        refresh: refresh the profile by requerying data
-        redraw: redraw the profile
+    This will create the report in the browser and return an object with the following functions:
+        remove: remove the report from the target DOM element
+        refresh: refresh the report by requerying data
+        redraw: redraw the report
         params: get the params object that was passed in to the create function
 */
 var nomisReport = function () {
