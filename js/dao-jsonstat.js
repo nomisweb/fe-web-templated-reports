@@ -59,7 +59,7 @@ function jsonstatDAO(uri, callback, options) {
 
          function _createCategory(cat) {
             var unit = null;
-            if(cat.unit) unit = {
+            if(cat && cat.unit) unit = {
                decimals: cat.unit.decimals
             }
 
@@ -102,6 +102,8 @@ function jsonstatDAO(uri, callback, options) {
             }
             else return null;
          }
+
+         if(_data == null) _err('Error with data');
 
          return {
             Data: Data,
