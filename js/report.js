@@ -548,7 +548,7 @@ var nomisReport = function () {
             var _section = section;
             var dsrc = section.options.datasource;
             var currData = data[dsrc.id];
-            var d = currData.dao;
+            var d = currData.dao.Dataset((dsrc.bundleDatasetIndex != undefined)? dsrc.bundleDatasetIndex : 0);
             var pivot = dsrc.pivot;
             var baseFilter = getFilter(d, dsrc.filter);
             var needsRequery = { status: false };
@@ -813,15 +813,12 @@ var nomisReport = function () {
                 }
             }
 
-            /*if (d.extension.subdescription) {
-            if (!opts.footnotes) opts.footnotes = [];
-            opts.footnotes.push(d.extension.subdescription);
-            }*/
-
             // Dataset metadata
-            if(d.extension) {
+            var metadiv = null;
+
+            if(d.extension && section.options.includeDatasetMetadata) {
                 var meta = d.extension.metadata;
-                var metadiv = nomisUI.element({ tagname: 'div', attributes: [{ name: 'class', value: 'dataset-metadata'}] });
+                metadiv = nomisUI.element({ tagname: 'div', attributes: [{ name: 'class', value: 'dataset-metadata'}] });
                 if (meta) {
                     for (var i = 0; i < meta.length; i++) {
                         var m = meta[i];
@@ -829,17 +826,10 @@ var nomisReport = function () {
 
                         if (m.title && m.title.length > 0) f = '<h2>' + m.title + '</h2>';
                         if (m.message) {
-                            if (m.title === "Statistical Disclosure Control") { // Bodge to put this message in the footer
-                                if (!opts.footnotes) opts.footnotes = [];
-
-                                opts.footnotes.push('h3' + m.title + '/h3' + m.message);
-                            }
-                            else if (section.options.includeDatasetMetadata) {
-                                f += nomisUI.util.textism(m.message);
-                                var met = document.createElement('div');
-                                met.innerHTML = f;
-                                metadiv.appendChild(met);
-                            }
+                            f += nomisUI.util.textism(m.message);
+                            var met = document.createElement('div');
+                            met.innerHTML = f;
+                            metadiv.appendChild(met);
                         }
                     }
                 }
@@ -892,10 +882,10 @@ var nomisReport = function () {
                 else return null;
             }
 
-            // If Nomis API make substitutions to create a dynamic XLSX url
             var url = d.apiUrl;
             if (!url) url = d.url;
             
+            // If Nomis API make substitutions to create a dynamic XLSX url
             if(url != null && url.indexOf("www.nomisweb.co.uk") >= 0) {
                 url = url.replace('jsonstat.json', 'data.xlsx');
 
@@ -924,7 +914,7 @@ var nomisReport = function () {
                     url += section.options.columns[i].id;
                 }
             }
-            else url = null;
+            else url = null; // Do not know how to get from an API URL to an XLSX link.
 
             return url;
         }
@@ -1155,7 +1145,7 @@ var nomisReport = function () {
                 if (target != null) target.appendChild(placeholder);
             }
 
-            var d = data[dsrc.id].dao;
+            var d = data[dsrc.id].dao.Dataset((dsrc.bundleDatasetIndex != undefined)? dsrc.bundleDatasetIndex : 0);
 
             var filter = getFilter(d, dsrc.filter);
             var val = '';
@@ -1325,7 +1315,7 @@ var nomisReport = function () {
             var d = src;
 
             return function () {
-                var ds = data[v.datasource].dao.Dataset(0);
+                var ds = data[v.datasource].dao.Dataset((v.bundleDatasetIndex != undefined)? v.bundleDatasetIndex : 0);
 
                 v.getValue = function (index) {
                     var cell = ds.Data(v.select);
