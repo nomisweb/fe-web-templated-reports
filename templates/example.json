@@ -11,28 +11,10 @@
       {
         "id": 2,
         "type": "jsonstat",
-        "url": "https://www.nomisweb.co.uk/api/v01/dataset/NM_145_1.jsonstat.json?geography=$geography&rural_urban=0&measures=20100,20301"
-      },
-      {
-        "id": 3,
-        "type": "jsonstat",
-        "url": "https://www.nomisweb.co.uk/api/v01/dataset/NM_603_1.jsonstat.json?geography=$geography&rural_urban=0&measures=20100,20301"
-      },
-      {
-        "id": 4,
-        "type": "jsonstat",
-        "url": "https://www.nomisweb.co.uk/api/v01/dataset/NM_604_1.jsonstat.json?geography=$geography&rural_urban=0&measures=20100,20301",
-        "substitute": {
-           "cell": [ { "value": "0", "label": "$subdescription" } ]
-        }
-      },
-      {
-        "id": 5,
-        "type": "jsonstat",
         "url": "https://www.cso.ie/StatbankServices/StatbankServices.svc/jsonservice/responseinstance/EP001?"
       },
       {
-        "id": 6,
+        "id": 3,
         "type": "jsonstat",
         "url": "http://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/nama_10_gdp?precision=1&na_item=B1GQ&unit=CLV05_MNAC&unit=CP_MEUR&unit=CP_MNAC&time=2016&filterNonGeo=1"
       }
@@ -76,11 +58,21 @@
           "options": {
             "caption": "$source",
             "includeDatasetMetadata" : false,
-            "datasource": { "id": 5, "bundleDatasetIndex": 0 },
+            "datasource": {
+              "id": 2,
+              "bundleDatasetIndex": 0,
+              "pivot": [
+                {
+                  "id": "Sex",
+                  "label": "Gender",
+                  "selected": "FIRST"
+                }
+              ]
+            },
             "source": "Central Statistics Office, Ireland (EP001)",
             "rows": [ { "id": "Province County or City", "select": [ "02", "14", "023" ] } ],
             "columns": [
-              { "id": "Sex", "select": [ "-" ] },
+              { "id": "Sex" },
               { "id": "Census Year" },
               { "id": "Statistic" }
             ]
@@ -95,8 +87,7 @@
           "type": "table",
           "options": {
             "caption": "$source",
-            "includeDatasetMetadata" : false,
-            "datasource": { "id": 6 },
+            "datasource": { "id": 3 },
             "source": "Eurostat",
             "rows": [ { "id": "geo", "select": [ "UK", "FR", "IT", "HU", "EL" ] } ],
             "columns": [
@@ -110,14 +101,14 @@
     },
     {
       "title": "Who we are",
-      "options": { "contentsText": "Information about the personal characterists of people who usually live in an area including: #0, #1, #2, and #3" },
+      "options": { "contentsText": "Information about the personal characterists of people who usually live in an area including: #0" },
       "sections": [
         {
           "type": "table",
           "options": {
             "caption": "Usual resident population",
-	    	"includeDatasetMetadata" : false,
-	    	"shortName" : "Resident population",
+            "includeDatasetMetadata" : true,
+            "shortName" : "Resident population",
             "datasource": { "id": 1 },
             "source": "ONS - $date Census (KS101EW)",
             "rows": [ { "id": "cell" } ],
@@ -130,68 +121,8 @@
               }
             ]
           }
-        },
-        {
-          "type": "table",
-          "options": {
-            "caption": "Age structure",
-	    	"includeDatasetMetadata" : false,
-	    	"shortName" : "Age",
-            "datasource": { "id": 2 },
-            "source": "ONS - $date Census (KS102EW)",
-            "rows": [ { "id": "cell" } ],
-            "columns": [
-              { "id": "geography" },
-              {
-                "id": "measures",
-                "select": [ "20100", "20301" ],
-                "labels": [ "count", "%" ]
-              }
-            ]
-          }
-        },
-        {
-          "type": "table",
-          "options": {
-            "caption": "Marital and civil partnership status",
-	    	"includeDatasetMetadata" : false,
-	    	"shortName" : "Marital status",
-            "datasource": { "id": 3 },
-            "source": "ONS - $date Census (KS103EW)",
-            "rows": [ { "id": "cell" } ],
-            "columns": [
-              { "id": "geography" },
-              {
-                "id": "measures",
-                "select": [ "20100", "20301" ],
-                "labels": [ "count", "%" ]
-              }
-            ]
-          }
-        },
-        {
-          "type": "table",
-          "options": {
-            "caption": "Living arrangements",
-	    	    "includeDatasetMetadata" : false,
-            "datasource": { "id": 4 },
-            "source": "ONS - $date Census (KS104EW)",
-            "rows": [ { "id": "cell" } ],
-            "columns": [
-              { "id": "geography" },
-              {
-                "id": "measures",
-                "select": [ "20100", "20301" ],
-                "labels": [ "count", "%" ]
-              }
-            ]
-          }
         }
       ]
-    },
-    {
-       "title": "Definitions",
-       "type": "definitions"
     }
   ]
 }
