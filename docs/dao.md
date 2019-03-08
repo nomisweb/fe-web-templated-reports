@@ -103,11 +103,11 @@ Represents information about a dimension and the categories of information that 
 Access to the categories in this dimension.
 
 *Arguments*
-- `cid`: Category ID (optional argument)
+- `cid`: Category ID (optional argument) of ID (string) or index (integer)
 
 *Returns (when no arguments)*
 An object with properties of:
-- `length`: number of categories.
+- `length`: number of elements in the `id` array.
 - `id`: array of all "Category objects" contained in the dimension.
 
 *Returns (when category ID specified)*
