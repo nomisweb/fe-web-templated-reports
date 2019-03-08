@@ -17,6 +17,11 @@
         "id": 3,
         "type": "jsonstat",
         "url": "http://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/nama_10_gdp?precision=1&na_item=B1GQ&unit=CLV05_MNAC&unit=CP_MEUR&unit=CP_MNAC&time=2016&filterNonGeo=1"
+      },
+      {
+        "id": 4,
+        "type": "csv",
+        "url": "example-data.csv"
       }
   ],
   "variables": {
@@ -76,6 +81,21 @@
               { "id": "Census Year" },
               { "id": "Statistic" }
             ]
+          }
+        }
+      ]
+    },
+    {
+      "title" : "Data from CSV file",
+      "sections" : [
+        {
+          "type": "table",
+          "options": {
+            "caption": "Example data",
+            "datasource": { "id": 4 },
+            "source": "None",
+            "rows": [ { "id": "Area", "select": [ "Durham", "Hartlepool" ] } ],
+            "columns": [ { "id": "column" } ]
           }
         }
       ]
