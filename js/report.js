@@ -323,24 +323,20 @@ var nomisReport = function () {
                     for (var i = 0; i < dclist.length; i++) {
                         var currdc = dclist[i];
                         var coldef = { label: dataLabel(col, dc, currdc) };
+                        var unit = dc.Category(dc.id[currdc]).unit;
 
-                        if (col.id === "measures") {
-                            var unit = dc.Category(dc.id[currdc]).unit;
-                            if (unit && unit.type) {
-                                coldef.classname = 'column-type-' + unit.type;
-                            }
-                        }
+                        // Unit of column
+                        if (unit != null && unit.type) coldef.classname = 'column-type-' + unit.type;
                         else coldef.classname = 'column-' + col.id;
 
-                        var clk = null;
+                        // Column heading onclick hook
                         try {
-                            clk = _params.hooks.table.columnHeading.onclick;
+                            var clk = _params.hooks.table.columnHeading.onclick;
+                            if(typeof(clk) === 'function') coldef.onclick = clk(col.id, dc.id[currdc], coldef.label);
                         }
                         catch {
                             // No problem as might not hava a hook
                         }
-
-                        if(clk) coldef.onclick = clk(col.id, dc.id[currdc], coldef.label);
 
                         list.push(coldef);
                         var subcols = [];
@@ -1755,7 +1751,7 @@ var nomisReport = function () {
         function prepURL(url, filter) {
             url = subsURLprop(url, filter);
             url = subsURLprop(url, _params.config);
-            url += '&_=' + url_randomizer;
+            url += ((url.indexOf('?') > -1)? '&' : '?') + '_=' + url_randomizer;
             return url;
         }
 
