@@ -114,9 +114,10 @@ var nomisReport = function () {
             return getChild(dim, root);
         }
 
-        function createNode(node, text) {
+        function createNode(node, text, cssClass) {
             var n = document.createElement(node);
             if (text != undefined) n.innerHTML = text;
+            if (cssClass != undefined) n.setAttribute('class', cssClass);
 
             return n;
         }
@@ -1133,6 +1134,20 @@ var nomisReport = function () {
             var d = data[dsrc.id].dao.Dataset((dsrc.bundleDatasetIndex != undefined)? dsrc.bundleDatasetIndex : 0);
 
             var filter = getFilter(d, dsrc.filter);
+
+            // Resolve dynamic filter properties with report config
+            nomisUI.util.forEachProperty(filter, function(p) { // Translate any numeric index into matching param from config
+                var sv = filter[p];
+                if(isNaN(sv) == false && _params.config[p] != undefined) {
+                    if(_params.config[p].length > sv) filter[p] = _params.config[p][sv];
+                    else console.log('Error: figure index ' + sv + ' out of bounds for config ' + p);
+                }
+            });
+
+            nomisUI.util.forEachProperty(_params.config, function(p) { // Add any missing properties
+                if(filter[p] == undefined) filter[p] = _params.config[p][0];
+            });
+
             var val = '';
             var txt = null;
             var symb = document.createElement('span'); // Symbol next to figure (e.g. change up or down)
@@ -1143,6 +1158,20 @@ var nomisReport = function () {
             else {
                 // Change between figures
                 var filter2 = getFilter(d, section.options.change.filter);
+
+                // Resolve dynamic filter properties with report config
+                nomisUI.util.forEachProperty(filter2, function(p) { // Translate any numeric index into matching param from config
+                    var sv = filter2[p];
+                    if(isNaN(sv) == false && _params.config[p] != undefined) {
+                        if(_params.config[p].length > sv) filter2[p] = _params.config[p][sv];
+                        else console.log('Error: figure index ' + sv + ' out of bounds for config ' + p);
+                    }
+                });
+
+                nomisUI.util.forEachProperty(_params.config, function(p) { // Add any missing properties
+                    if(filter2[p] == undefined) filter2[p] = _params.config[p][0];
+                });
+
                 var v1 = d.Data(filter).value;
                 var v2 = d.Data(filter2).value;
 
@@ -1185,7 +1214,7 @@ var nomisReport = function () {
             div.setAttribute('class', 'figurebox');
             div.appendChild(valdiv);
             if (txt != null) div.appendChild(createNode('div', txt));
-            if (section.options.footer != undefined) div.appendChild(createNode('div', substituteFilterLabels(section.options.footer, d, filter)));
+            if (section.options.footer != undefined) div.appendChild(createNode('div', substituteFilterLabels(section.options.footer, d, filter), 'figurebox-footer'));
             if (section.options.showSource == true) div.appendChild(createSourceDiv(d));
 
             setSection(placeholder, section, div, d, filter);
@@ -1230,7 +1259,7 @@ var nomisReport = function () {
                 var id = dim.label;
                 var lbl = null;
 
-                if (filter[id] != undefined) lbl = dim.Category(filter[id]);
+                if (filter[id] != undefined) lbl = dim.Category(filter[id]).label;
                 else {
                     lbl = '';
 
@@ -1341,20 +1370,28 @@ var nomisReport = function () {
             vlisteners = [];
 
             var list = profile.variables;
-            for (var property in list) {
-                if (list.hasOwnProperty(property)) {
-                    var v = list[property];
-                    var src = findDatasource(profile, v.datasource);
 
-                    if (v.select) {
-                        if (v.select.geography != undefined && v.select.geography != null && isNaN(parseInt(v.select.geography)) != true && v.select.geography < (1 << 22)) v.select.geography = '' + _params.config.geography[v.select.geography];
-                        if (v.select.geography == undefined || v.select.geography == null) v.select.geography = '' + _params.config.geography[0];
-                    }
+            nomisUI.util.forEachProperty(list, function(property) {
+                var v = list[property];
+                var src = findDatasource(profile, v.datasource);
 
-                    if (!src.listeners) src.listeners = new Array();
-                    src.listeners.push(createVarDataReadyCallback(v, src));
+                if(v.select) {
+                    nomisUI.util.forEachProperty(v.select, function(p) { // Translate any numeric index into matching param from config
+                        var sv = v.select[p];
+                        if(isNaN(sv) == false && _params.config[p] != undefined) {
+                            if(_params.config[p].length > sv) v.select[p] = _params.config[p][sv];
+                            else console.log('Error: variable index ' + sv + ' out of bounds for config ' + p);
+                        }
+                    });
+
+                    nomisUI.util.forEachProperty(_params.config, function(p) { // Add any missing properties
+                        if(v.select[p] == undefined) v.select[p] = _params.config[p][0];
+                    });
                 }
-            }
+
+                if (!src.listeners) src.listeners = new Array();
+                src.listeners.push(createVarDataReadyCallback(v, src));
+            });
         }
 
         function notifyVarsReady() {
