@@ -37,6 +37,24 @@
 .dataset-metadata h2 { padding-left: 0; }
 .table-footnote h3 { padding-left: 0; }
 
+.figurebox {
+    width: 13em;
+    background: #dfe2d9;
+    padding: 1em;
+    margin: 1em;
+}
+.figurebox-value {
+    font-size: 3em;
+    color: #060;
+    padding-bottom: 0.5em;
+    text-align: center;
+}
+.figurebox-footer {
+    text-align: center;
+    font-size: 0.8em;
+    color: #060;
+}
+
 @media screen and (max-width: 1199px) {
     table { min-width: auto; }
 }
