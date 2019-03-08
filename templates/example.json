@@ -28,7 +28,7 @@
     "usualresidents" : {
       "name" : "usual residents",
       "datasource": 1,
-      "select" : { "cell": "0", "measures" : "20100" }
+      "select" : { "cell": "0", "measures" : "20100", "geography": 0 }
     }
   },
   "sections": [
@@ -147,11 +147,20 @@
     {
       "type": "figure",
       "options": {
-        "title": "Usual resident population",
-        "footer": "$geography",
+        "footer": "Percentage lives in a household in $geography",
         "datasource": {
           "id": 1,
-          "filter": { "cell": "0", "measures" : "20100" }
+          "filter": { "cell": "3", "measures" : "20301", "geography": 0 }
+        }
+      }
+    },
+    {
+      "type": "figure",
+      "options": {
+        "footer": "Number of persons per hectare in $geography",
+        "datasource": {
+          "id": 1,
+          "filter": { "cell": "7", "measures" : "20100", "geography": 1 }
         }
       }
     }
