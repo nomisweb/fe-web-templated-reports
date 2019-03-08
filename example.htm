@@ -10,6 +10,7 @@
     <link rel="Stylesheet" href="css/report.css" />
     <script type="text/javascript" src="js/report.js"></script>
     <script type="text/javascript" src="js/dao-jsonstat.js"></script>
+    <script type="text/javascript" src="js/dao-csv.js"></script>
 </head>
 <body>
 <main role="main">
@@ -25,7 +26,8 @@
             target: document.getElementById('report'),
             lazyload: false,
             dao: {
-                jsonstat: jsonstatDAO
+                jsonstat: jsonstatDAO,
+                csv: csvDAO
             }
         });
     });
