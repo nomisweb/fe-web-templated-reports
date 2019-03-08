@@ -73,9 +73,7 @@ function jsonstatDAO(uri, callback, options) {
             else return null;
          }
 
-         function Dimension(id) {
-            var dim = _data.Dimension(id);
-
+         function _createDimension(dim) {
             if(dim) return {
                label: dim.label,
                hierarchy: dim.hierarchy,
@@ -83,24 +81,16 @@ function jsonstatDAO(uri, callback, options) {
                length: dim.length,
                extension: dim.extension,
                Category: function(cid) {
-                  // All categories as a list
-                  if(cid == undefined || cid == null) {
-                     var cats = dim.Category();
-
-                     var list = new Array();
-
-                     cats.forEach(function(e, i) {
-                        list.push(_createCategory(e));
-                     });
-
-                     return list;
-                  }
-                  else { // Just a specific category
-                     return _createCategory(dim.Category(cid));
-                  }
+                  if(cid == undefined || cid == null) return dim.Category().map(x => _createCategory(x)); // All categories as a list.
+                  else return _createCategory(dim.Category(cid)); // Just a specific category.
                }
             }
             else return null;
+         }
+
+         function Dimension(id) {
+            if(id == undefined || id == null) return _data.Dimension().map(x => _createDimension(x)); // All dimensions as a list.
+            else return _createDimension(_data.Dimension(id)); // Just a specific dimension.
          }
 
          if(_data == null) _err('Error with data');

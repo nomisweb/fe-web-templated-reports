@@ -61,9 +61,12 @@ Provides access to data observation values.
 Provides access to structural information about the dimensions and the categories of information they contain (for example a dimension might be "ages" and the categories for that dimension might the individual ages of people).
 
 *Arguments*
-- `id`: the reference of the dimension required.
+- `id`: the reference of the dimension required (optional).
 
-*Returns*
+*Returns (when no arguments)*
+- Array of all "Dimension object"
+
+*Returns (when `id` specified)*
 - "Dimension object" through which the category information can be accessed.
 - `null` if no dimension is found matching the `id` specified.
 
@@ -110,7 +113,7 @@ An object with properties of:
 - `length`: number of elements in the `id` array.
 - `id`: array of all "Category objects" contained in the dimension.
 
-*Returns (when category ID specified)*
+*Returns (when `cid` specified)*
 - A "Category object" for the category with a matching ID.
 - `null` if category with matching ID is not found.
 

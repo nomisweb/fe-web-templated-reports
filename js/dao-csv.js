@@ -42,8 +42,9 @@ function csvDAO(uri, callback) {
          }
 
          function Dimension(id) {
-            if(id === rowDimId) return rowDimension;
-            else if(id === colDimId) return colDimension;
+            if(id == undefined || id == null) return [ rowDimension, colDimension ]; // All dimensions
+            else if(id === rowDimId) return rowDimension; // Row dimension
+            else if(id === colDimId) return colDimension; // Column dimension
             else return null; // Not found.
          }
 
