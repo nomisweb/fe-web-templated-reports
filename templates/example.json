@@ -143,6 +143,17 @@
           }
         }
       ]
+    },
+    {
+      "type": "figure",
+      "options": {
+        "title": "Usual resident population",
+        "footer": "$geography",
+        "datasource": {
+          "id": 1,
+          "filter": { "cell": "0", "measures" : "20100" }
+        }
+      }
     }
   ]
 }
