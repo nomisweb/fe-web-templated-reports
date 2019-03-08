@@ -61,6 +61,10 @@ The variable is defined and referenced through a property object. The object con
 }
 ```
 
+*Notes*
+- You can dynamically substitute a `select` dimension property with the value from the report configuration by specifying a numeric value within the bounds of that configuration array.
+- This type of section requires names of parameters used in the report configuration section to match the dimension names of the datasource.
+
 ### sections
 Sections are groups of content, supporting headings, paragraphs, tables and other content.
 
@@ -199,6 +203,8 @@ Options are:
 
 *Notes*
 - The `datasource` property functions as described in the `table` section documentation.
+- You can dynamically substitute a `filter` dimension property with the value from the report configuration by specifying a numeric value within the bounds of that configuration array.
+- This type of section requires names of parameters used in the report configuration section to match the dimension names of the datasource.
 
 ##### Change comparison
 You can also compare the change between two figures in a stat box. To do this, add the `change` property
