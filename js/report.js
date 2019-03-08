@@ -1,12 +1,7 @@
 /*
-*
-* Nomis Report creator
-*
-* Author: Spencer Hedger
-*
-*/
+    Nomis Report creator
+    Author: Spencer Hedger
 
-/*
     Usage: call "nomisReport.create(params)" with configuration.
 
     This will create the report in the browser and return an object with the following functions:
@@ -20,14 +15,12 @@ var nomisReport = function () {
         var _params = params;
         var data = null;
         var win = $(window);
-        var doc = $(document);
         var profile = null;
         var profile_tgt = params.target;
         var placeholders = [];
         var url_randomizer = 0;
         var renderedsecs = 0; // Number of sections rendered
         var renderedsecscomplete = 0; // Number of sections that have completed rendering
-        var mapnum = 0;
         var defs = []; // Definitions section
         var defdiv = null; // Div for definition content
         var defname = null; // Name of definitions section
@@ -235,10 +228,6 @@ var nomisReport = function () {
             div.innerHTML = text;
 
             setSection(placeholder, section, div);
-        }
-
-        function getTableDimensionIndex(table, dimensionId) {
-            return table[0].indexOf(dimensionId);
         }
 
         function findDatasource(p, id) {
@@ -1455,26 +1444,11 @@ var nomisReport = function () {
             else return obj;
         }
 
-        function getv(obj) {
-            if (typeof obj === 'object') return obj.value;
-            else return obj;
-        }
-
         function subsel(spec, val) {
             if (val.indexOf('$') == 0 && _params.config[spec.id] != undefined) {
                 return _params.config[spec.id][val.split('$')[1]];
             }
             else return val;
-        }
-
-        function subselidx(spec, val) {
-            for (var i = 0; i < spec.select.length; i++) {
-                var tmp = subsel(spec, spec.select[i]);
-
-                if (tmp == val) return i;
-            }
-
-            return -1;
         }
 
         function numberWithCommas(x) {
@@ -1766,16 +1740,6 @@ var nomisReport = function () {
         function getDataForSource(u, callback) {
             if (u.type === 'html') call_html(u, callback); // Special case for HTML as type isn't really "data" in the DAO sense
             else call_data(u, callback); // All other types of data should use a DAO
-        }
-
-        function getdata(datasources, callback) {
-            data = [];
-
-            var urls = datasources;
-
-            for (var i = 0; i < urls.length; i++) {
-                getDataForSource(urls[i], callback);
-            }
         }
 
         function render(p) {
