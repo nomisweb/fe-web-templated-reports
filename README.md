@@ -35,7 +35,7 @@ How to place a report on your web page
 
 Complete working example
 ------------------------
-This project contains an example report `example.htm` which uses the template in `templates/example.json`.
+This project contains an [example report](example.htm) which uses an [example template](templates/example.json).
 
 Creating a template
 -------------------
@@ -50,12 +50,18 @@ Creating a custom DAO
 ---------------------
 The project currently supports only JSON-stat and simple CSV files for data sources, but this can be extended with your own DAO to support any format you require.
 
-Please see the docs/dao.md for more information.
+Please see the [DAO documentation](docs/dao.md) for more information.
 
 Dependencies
 ------------
 Requires the following libraries/projects:
 - https://jquery.com for Ajax calls to retreive data
-- https://github.com/badosa/JSON-stat required by `js/dao-jsonstat.js` (if used) to interpret JSON-stat formatted data
+- https://github.com/badosa/JSON-stat required by [js/dao-jsonstat.js](js/dao-jsonstat.js) (if used) to interpret JSON-stat formatted data
 - https://www.github.com/nomisweb/fe-web-light-ui for table creation
 - https://www.github.com/spencerhedger/function-queue to manage queuing of multiple asynchronous calls to get data
+
+Copyright
+---------
+Copyright ©‎ 2019, Crown Copyright (Office for National Statistics)
+
+Released under MIT license, see [LICENSE](LICENSE) for details.
