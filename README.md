@@ -48,7 +48,7 @@ Setting up report parameters
 
 Creating a custom DAO
 ---------------------
-The project currently supports only JSON-stat for data sources, but this can be extended with your own DAO to support any format you require.
+The project currently supports only JSON-stat and simple CSV files for data sources, but this can be extended with your own DAO to support any format you require.
 
 Please see the docs/dao.md for more information.
 
